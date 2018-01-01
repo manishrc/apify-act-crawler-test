@@ -142,6 +142,24 @@ export const decorateEnqueuePage = async (page, interceptRequestStr) => {
     }, interceptRequestStr, ENQUEUE_PAGE_ALLOWED_PROPERTIES);
 };
 
+
+/**
+ * Get all Child Frame content
+ */
+export const getChildFrameContent = async (page, crawlerConfig) => {
+    let childFrames = await page.mainFrame().childFrames();
+    let childFramePromises = childFrames.map(frame => extractHTMLWithAbsLinks(frame));
+    return await Promise.all(childFramePromises).then(values => values.join());
+
+    async function extractHTMLWithAbsLinks(frame){
+    let url = frame.url();
+    let rel_html = await frame.evaluate(() => '<div class="ph_frame">' +  document.body.innerHTML + '</div>');
+    return absolute(rel_html, url);
+    }
+};
+//
+
+
 /**
  * Executes page function in a context of the page.
  */

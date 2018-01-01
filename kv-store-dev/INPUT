@@ -2,13 +2,13 @@
     "startUrls": [
         {
             "key": "",
-            "value": "https://manishrc.com/"
+            "value": "http://www.brentwoodline.com/p/product/b05f48f0-9284-484c-9501-f3b0992abf23/flex-12-can-cooler"
         }
     ],
     "crawlPurls": [
         {
             "key": "something",
-            "value": "https://manishrc.com[.*]"
+            "value": "http://www.brentwoodline.com/p/product/b05f48f0-9284-484c-9501-f3b0992abf23/flex-12-can-cooler"
         }
     ],
     "maxParallelRequests": 1,
