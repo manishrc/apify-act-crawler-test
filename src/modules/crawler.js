@@ -17,8 +17,6 @@
  */
 
 const cheerio = require('cheerio');
-const absolute = require('relatively-absolute');
-
 import Apify from 'apify';
 import _ from 'underscore';
 import EventEmitter from 'events';

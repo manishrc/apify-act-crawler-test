@@ -6,7 +6,7 @@
  *            otherwise Babel will replace that with "_underscore2" and breaks the code.
  */
 import path from 'path';
-const absolute = require('relatively-absolute');
+import transform_urls from 'relatively-absolute';
 import { chain } from 'underscore';
 import { ENQUEUE_PAGE_ALLOWED_PROPERTIES } from './request';
 import { logInfo, logDebug, logError } from './utils';
