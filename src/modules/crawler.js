@@ -35,6 +35,7 @@ export const EVENT_SNAPSHOT = 'snapshot';
 const PUPPETEER_CONFIG = {
     dumpio: NODE_ENV !== 'production',
     slowMo: 0,
+    ignoreHTTPSErrors: true,
     args: [],
 };
 
