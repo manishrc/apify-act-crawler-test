@@ -16,6 +16,9 @@
  * - EVENT_SNAPSHOT with screenshot and html to be saved into key-value store.
  */
 
+const cheerio = require('cheerio');
+const absolute = require('relatively-absolute');
+
 import Apify from 'apify';
 import _ from 'underscore';
 import EventEmitter from 'events';
@@ -43,6 +46,7 @@ export default class Crawler extends EventEmitter {
         this.crawlerConfig = crawlerConfig;
         this.browser = null;
         this.gotoOptions = {};
+        this.gotoOptions.waitUntil = 'networkidle0';
         this.browsers = [];
         this.browserPosition = 0;
         this.requestsInProgress = _.times(crawlerConfig.browserInstanceCount, () => 0);
@@ -245,6 +249,44 @@ export default class Crawler extends EventEmitter {
             if (this.crawlerConfig.cookies && this.crawlerConfig.cookies.length) {
                 await page.setCookie(...this.crawlerConfig.cookies);
             }
+
+            // Start Custom Blocks
+            const BLOCK_RESOURCE_TYPES = [
+                'beacon',
+                'csp_report',
+                'font',
+                'image',
+                'imageset',
+                'media',
+                'ping',
+                'stylesheet',
+              ];
+            await page.setRequestInterception(true);
+            page.on('request', request => {
+                if (
+                   request.url.endsWith('.png')
+                || request.url.endsWith('.jpg')
+                || request.url.endsWith('.jpeg')
+                || request.url.endsWith('.pdf')
+                || request.url.endsWith('.css')
+                || request.url.endsWith('.wav')
+                || request.url.endsWith('.ogg')
+                || request.url.endsWith('.cur')
+                || request.url.endsWith('.gif')
+                || request.url.endsWith('.svg')
+                || request.url.endsWith('.css')
+                || request.url.endsWith('.map')
+                || request.url.endsWith('.ogg')
+                ) {
+                    request.abort();
+                } else if (BLOCK_RESOURCE_TYPES.indexOf(request.resourceType) > -1){
+                    request.abort();
+                } else {
+                    request.continue();
+                }
+            });
+
+            // End Custom Blocks
             await page.goto(request.url, this.gotoOptions);
             await this._processRequest(page, request);
             clearTimeout(timeout);
@@ -317,8 +359,14 @@ export default class Crawler extends EventEmitter {
         await utils.clickClickables(page, this.crawlerConfig.clickableElementsSelector);
 
         request.pageFunctionStartedAt = new Date();
-        request.pageFunctionResult = await utils.executePageFunction(page, this.crawlerConfig);
-        request.pageFramesResult = await utils.getChildFrameContent(page);
+        // request.pageFunctionResult = await utils.executePageFunction(page, this.crawlerConfig);
+        const pageFunctionResult = await utils.executePageFunction(page, this.crawlerConfig);
+        const pageFramesResult = await utils.getChildFrameContent(page);
+        const $ = cheerio.load(pageFunctionResult);
+        $('body').append(pageFramesResult);
+        request.pageFunctionResult = {
+            html_data: $.html()
+        };
         request.pageFunctionFinishedAt = new Date();
 
         await Promise.all(beforeEndPromises);

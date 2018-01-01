@@ -6,9 +6,11 @@
  *            otherwise Babel will replace that with "_underscore2" and breaks the code.
  */
 import path from 'path';
+const absolute = require('relatively-absolute');
 import { chain } from 'underscore';
 import { ENQUEUE_PAGE_ALLOWED_PROPERTIES } from './request';
 import { logInfo, logDebug, logError } from './utils';
+
 
 export const injectJQueryScript = async (page) => {
     const jQueryPath = path.resolve(path.join(__dirname, '../../node_modules/jquery/dist/jquery.js'));
@@ -154,6 +156,8 @@ export const getChildFrameContent = async (page, crawlerConfig) => {
     async function extractHTMLWithAbsLinks(frame){
     let url = frame.url();
     let rel_html = await frame.evaluate(() => '<div class="ph_frame">' +  document.body.innerHTML + '</div>');
+    // return rel_html;
+
     return absolute(rel_html, url);
     }
 };
@@ -164,7 +168,8 @@ export const getChildFrameContent = async (page, crawlerConfig) => {
  * Executes page function in a context of the page.
  */
 export const executePageFunction = async (page, crawlerConfig) => {
-    return page.evaluate((passedCrawlerConfig) => {
+    let url = page.url();
+    let rel_html = await page.evaluate((passedCrawlerConfig) => {
         console.log('Running page function');
 
         const context = window.APIFY_CONTEXT;
@@ -215,12 +220,15 @@ export const executePageFunction = async (page, crawlerConfig) => {
                     clearTimeout(pageFunctionTimeout);
                     console.log('Page function done');
 
-                    return result;
+                    // return result;
+                    return document.documentElement.outerHTML;
                 });
         } catch (err) {
             return Promise.reject(err);
         }
     }, crawlerConfig);
+
+    return absolute(rel_html, url);
 };
 
 /**
