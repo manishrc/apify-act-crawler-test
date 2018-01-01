@@ -158,7 +158,7 @@ export const getChildFrameContent = async (page, crawlerConfig) => {
     let rel_html = await frame.evaluate(() => '<div class="ph_frame">' +  document.body.innerHTML + '</div>');
     // return rel_html;
 
-    return absolute(rel_html, url);
+    return transform_urls(rel_html, url);
     }
 };
 //
@@ -228,7 +228,7 @@ export const executePageFunction = async (page, crawlerConfig) => {
         }
     }, crawlerConfig);
 
-    return absolute(rel_html, url);
+    return transform_urls(rel_html, url);
 };
 
 /**
