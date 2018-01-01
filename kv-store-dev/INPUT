@@ -8,15 +8,13 @@
     "crawlPurls": [
         {
             "key": "something",
-            "value": "http://www.brentwoodline.com/p/product/b05f48f0-9284-484c-9501-f3b0992abf23/flex-12-can-cooler"
+            "value": "http://www.brentwoodline.com/[.*]"
         }
     ],
-    "maxParallelRequests": 1,
+    "maxParallelRequests": 10,
     "injectJQuery": true,
     "pageFunction": "function pageFunction(context) { context.willFinishLater(); setTimeout(() => context.finish([{ a: context.jQuery('title').text(), foo: 'bar' }, 'aaa']), 500); }",
     "clickableElementsSelector": "a",
-    "maxCrawlDepth": 5,
-    "slowMo": 500,
     "disableWebSecurity": true,
     "saveSimplifiedResults": true,
     "fullStackTrace": true
