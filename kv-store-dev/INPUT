@@ -2,13 +2,13 @@
     "startUrls": [
         {
             "key": "",
-            "value": "https://news.ycombinator.com"
+            "value": "https://manishrc.com"
         }
     ],
     "crawlPurls": [
         {
             "key": "something",
-            "value": "https://news.ycombinator.com/news?p=[\\d+]"
+            "value": "https://manishrc.com[.*]"
         }
     ],
     "maxParallelRequests": 1,
