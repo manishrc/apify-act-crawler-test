@@ -318,7 +318,7 @@ export default class Crawler extends EventEmitter {
 
         request.pageFunctionStartedAt = new Date();
         request.pageFunctionResult = await utils.executePageFunction(page, this.crawlerConfig);
-        request.pageFramesResult = await getChildFrameContent(page);
+        request.pageFramesResult = await utils.getChildFrameContent(page);
         request.pageFunctionFinishedAt = new Date();
 
         await Promise.all(beforeEndPromises);
